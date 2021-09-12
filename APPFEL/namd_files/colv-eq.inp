@@ -1,0 +1,58 @@
+colvarsTrajFrequency   COLVAR_FREQ   #  controls frequency of output values
+
+
+colvar {
+  name orient-prot # needed to identify the variable
+
+  outputappliedForce yes # report also the applied force on this colvar
+
+  orientation   {
+    atoms {
+      atomsFile             atoms.pdb
+      atomsCol              O
+      atomsColValue         1.0
+     }
+
+
+   refPositionsFile      atoms.pdb
+   refPositionsCol       O
+   refPositionsColValue  1.0
+
+}
+}
+
+
+colvar {
+  name posit-prot # needed to identify the variable
+
+  outputappliedForce yes # report also the applied force on this colvar
+                        # (in addition to the current value)
+
+
+  distance {
+    group1 {
+      atomsFile             atoms.pdb
+      atomsCol              O
+      atomsColValue         1.0
+    }
+    group2 {
+      dummyatom (xxxx, yyyy, zzzz)
+    }
+  }
+}
+
+
+harmonic {
+  name posit1
+  colvars posit-prot
+  centers 0.0
+  forceConstant   REC_TR_FC
+}
+
+
+harmonic {
+  name orient1
+  colvars orient-prot
+  centers (1.0, 0.0, 0.0, 0.0)
+  forceConstant   REC_OR_FC
+}

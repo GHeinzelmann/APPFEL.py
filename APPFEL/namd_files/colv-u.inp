@@ -1,0 +1,199 @@
+colvarsTrajFrequency   COLVAR_FREQ   # output values frequency
+
+
+colvar {
+  name orient-prot # needed to identify the variable
+
+  outputvalue off
+
+  orientation   {
+    atoms {
+      atomsFile             atoms.pdb
+      atomsCol              O
+      atomsColValue         1.0
+     }
+
+
+   refPositionsFile      atoms.pdb
+   refPositionsCol       O
+   refPositionsColValue  1.0
+
+}
+}
+
+
+colvar {
+  name posit-prot # needed to identify the variable
+
+  outputvalue off
+
+
+  distance {
+    group1 {
+      atomsFile             atoms.pdb
+      atomsCol              O
+      atomsColValue         1.0
+    }
+    group2 {
+      dummyatom (xxxx, yyyy, zzzz)
+    }
+  }
+}
+
+
+colvar {
+  name rmsd-prot 
+
+  outputvalue off
+
+  rmsd   {
+    atoms {
+      atomsFile             atoms.pdb
+      atomsCol              B
+      atomsColValue         1.0
+     }
+
+
+   refPositionsFile      atoms.pdb
+   refPositionsCol       B
+   refPositionsColValue  1.0
+
+}
+}
+
+
+colvar {
+  name rmsd-lig
+
+  outputvalue off
+
+  rmsd   {
+    atoms {
+      atomsFile             atoms.pdb
+      atomsCol              B
+      atomsColValue         2.0
+     }
+
+
+   refPositionsFile        atoms.pdb
+   refPositionsCol         B
+   refPositionsColValue    2.0
+
+}
+}
+
+
+colvar {
+  name orient-lig 
+
+  outputvalue off 
+
+  orientation   {
+    atoms {
+      atomsFile             atoms.pdb
+      atomsCol              O
+      atomsColValue         2.0
+     }
+
+
+   refPositionsFile      atoms.pdb
+   refPositionsCol       O
+   refPositionsColValue  2.0
+
+}
+}
+
+colvar {
+  name posit-XY-lig
+
+  outputvalue on
+
+
+  distanceXY {
+    main     {
+      atomsFile             atoms.pdb
+      atomsCol              O
+      atomsColValue         2.0
+    }
+    ref      {
+      dummyatom (llxx, llyy, llzz)
+    }
+  }
+}
+
+
+colvar {
+  name posit-Z-lig
+
+  outputvalue on
+
+
+  distanceZ {
+    main     {
+      atomsFile             atoms.pdb
+      atomsCol              O
+      atomsColValue         2.0
+    }
+    ref      {
+      dummyatom (llxx, llyy, llzz)
+    }
+  }
+}
+
+
+harmonic {
+  name posit1
+  colvars posit-prot
+  centers 0.0
+  forceConstant   REC_TR_FC
+}
+
+
+harmonic {
+  name orient1
+  colvars orient-prot
+  centers (1.0, 0.0, 0.0, 0.0)
+  forceConstant   REC_OR_FC
+}
+
+
+harmonic {
+  name rmsd1
+  colvars rmsd-prot
+  centers 0.0
+  forceConstant   REC_RM_FC
+}
+
+
+harmonic {
+  name rmsd2
+  colvars rmsd-lig
+  centers 0.0
+  forceConstant   LIG_RM_FC
+}
+
+
+harmonic {
+  name orient2
+  colvars orient-lig
+  centers (1.0, 0.0, 0.0, 0.0)
+  forceConstant   LIG_OR_FC
+}
+
+
+harmonic {
+  name posit2
+  colvars posit-XY-lig
+  centers 0.0
+  forceConstant   LIG_TR_FC
+}
+
+
+harmonic {
+  name posit3
+  colvars posit-Z-lig
+  centers   PMF_CENT
+  forceConstant   LIG_TR_FC
+}
+
+

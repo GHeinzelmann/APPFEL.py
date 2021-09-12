@@ -1,0 +1,30 @@
+colvarsTrajFrequency   COLVAR_FREQ   # output values frequency
+
+
+colvar {
+  name rmsd-prot 
+
+  outputvalue on
+
+  rmsd   {
+    atoms {
+      atomsFile             atoms.pdb
+      atomsCol              B
+      atomsColValue         1.0
+     }
+
+
+   refPositionsFile      atoms.pdb
+   refPositionsCol       B
+   refPositionsColValue  1.0
+
+}
+}
+
+harmonic {
+  name rmsd1
+  colvars rmsd-prot
+  centers 0.0
+  forceConstant   REC_RM_FC
+}
+

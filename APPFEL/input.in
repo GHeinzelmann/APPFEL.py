@@ -1,0 +1,99 @@
+#!/usr/bin/env python2
+
+#############################################################################################################
+########## Input file for BAT.py, for fully automated absolute binding free energy calculations ##########
+#############################################################################################################
+
+# Structure information
+
+system = 1bbz
+
+rec_chain     =  A   # Chain identified as receptor in the original complex file (kept fixed)
+
+lig_chain     =  B   # Chain identified as ligand in the original complex file (pulled from receptor)
+
+# Variables for setting free energy calculations, also used on analysis       
+
+fe_type = all # Type of free energy calculations (all, rest, dd, pmf, dd-rest, pmf-rest, custom)
+
+components = [ t a l c] # Used with custom option for fe_type
+
+rest_wgt = [ 0.00 0.20 0.40 0.80 1.60 2.40 4.00 5.50 8.65 11.80 18.10 24.40 37.00 49.60 74.80 100.00 ]   # Restraints attach/release weights
+
+pmf_dist  = [ 0.00 0.40 0.80 1.20 1.60 2.00 2.40 2.80 3.20 3.60 4.00 4.40 4.80 5.20 5.60 6.00 6.40 6.80 7.20 7.60 8.00 8.40 8.80 9.20 9.60 10.00 10.40 10.80 11.20 11.60 12.00 12.40 12.80 13.20 13.60 14.00 14.40 14.80 15.20 15.60 16.00 ]   # Umbrella windows  
+
+blocks = 5    # Number of blocks for block data analysis
+
+num_sim = 10
+
+# Force constants
+
+rec_trans_force      =  1000.0   # Receptor center of mass distance spring constant - kcal/mol/Angstrom**2
+rec_orient_force     = 10000.0   # Receptor orientation spring constant - kcal/mol/rad**2
+rec_rmsd_force       =    50.0   # Protein conformational RMSD spring constant - kcal/mol/Angstrom**2
+lig_trans_force      =    10.0   # Ligand center of mass distance spring constant - kcal/mol/Angstrom**2
+lig_orient_force     =  1500.0   # Ligand orientation spring constant - kcal/mol/rad**2
+lig_rmsd_force       =    50.0   # Ligand conformational RMSD spring constant - kcal/mol/Angstrom**2
+
+# Water model, number and box size in the x and y direction
+
+water_model      = TIP3P  # Water model (SPCE, TIP4PEW or TIP3P)
+boxsize_x        = 60     # Simulation box size in the x direction
+boxsize_y        = 60     # Simulation box size in the y direction
+boxsize_z        = 90     # Simulation box size in the z direction (pulling direction)
+box_z_center     = 15     # Simulation box size in the z direction (pulling direction)
+boxsize_ligand   = 60     # Simulation x, y and z box size for ligand only
+
+# Counterions 
+
+neutralize_only = no       # neutralize only or also ionize
+cation          = SOD      # cation for neutralization/ionization                
+anion           = CLA      # anion  for neutralization/ionization   
+ion_conc        = 0.15     # desired ion concentration in mol/L
+
+# Simulation parameters
+
+Temperature	= 298.15    # Temperature of simulation and analysis 
+
+eq_steps	= 200000  # Number of steps for equilibration after heating
+
+smd_steps 	= 800000   # Number of steps for pulling SMD
+
+a_steps1	= 10000    # Number of steps per window for component a (equilibrium)
+a_steps2	= 30000   # Number of steps for window component a (production) 
+ 
+l_steps1	= 10000    # Number of steps per window for component l (equilibrium)  
+l_steps2	= 30000   # Number of steps for window component l (production)             
+
+t_steps1	= 10000    # Number of steps per window for component t (equilibrium)
+t_steps2	= 30000   # Number of steps for window component t (production)     
+
+u_steps1	= 10000   # Number of steps per window for component u (equilibrium)
+u_steps2	= 20000   # Number of steps for window component u (production)     
+
+c_steps1	= 10000   # Number of steps per window for component c (equilibrium)
+c_steps2	= 30000   # Number of steps for window component c (production)     
+
+r_steps1	= 10000   # Number of steps per window for component r (equilibrium) 
+r_steps2	= 30000   # Number of steps for window component r (production)     
+
+# Conformational restraints on the protein and ligand (Use VMD syntax) - **receptor is always segname A and ligand always segname B**
+
+rec_restr		= "(segname A) and (same residue as within 4 of segname B) and (noh)"     # VMD expression for protein conformational RMSD restraints
+lig_restr		= "(segname B) and (same residue as within 4 of segname A) and (noh)"     # VMD expression for ligand conformational RMSD restraints
+
+# NAMD options for production simulations
+
+restartfreq = 1000              # write coordinate/velocity restart files every restartfreq steps
+dcdfreq = 20000                 # write coordinates to trajectory file every dcdfreq steps (controls PMF and restraints output)
+xstfreq = 1000                 # write box size to xst file every xstfreq steps
+outputPressure = 5000           # write pressure to output file every outputPressure steps 
+outputEnergies = 5000           # write energies to output file every outputEnergies steps 
+colvarsTrajFrequency = 1000      # write colvars trajectories every colvarsTrajFrequency steps 
+cutoff = 12.0                   # cutoff for nonbonded interactions 
+langevinDamping = 5.0           # collision frequency in ps^-1 for Langevin Dynamics (temperature control)
+timestep = 2                    # simulation ime step in fs
+
+# Force field options for receptor and ligand
+
+force_field = CHARMM

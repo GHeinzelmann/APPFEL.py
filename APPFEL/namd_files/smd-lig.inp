@@ -1,0 +1,10 @@
+
+harmonic {
+  name posit3
+  colvars     posit-Z-lig
+  centers     4.0
+  targetcenters     FINAL_DIS
+  targetnumsteps    SMD_STEPS
+  forceConstant     LIG_TR_FC
+}
+

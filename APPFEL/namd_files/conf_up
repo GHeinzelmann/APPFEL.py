@@ -1,0 +1,127 @@
+set inputname   ./out_$input_pr
+set outputname  ./out_$input
+if {1} {
+bincoordinates   $inputname.restart.coor
+binvelocities    $inputname.restart.vel
+extendedSystem   $inputname.restart.xsc
+}
+set ref_umb      ./refumb0.pdb
+structure        ./ionized.psf
+coordinates      ./ionized.pdb
+
+######################################################
+## INPUT SETTINGS                                   ##
+######################################################
+
+firsttimestep      0
+set temperature    TEMP
+set cons 1
+set min  0
+set pres 1
+
+#############################################################
+## SIMULATION PARAMETERS                                   ##
+#############################################################
+
+# Input
+paraTypeCharmm	    on
+parameters          ./par_all36_prot.prm
+parameters          ./par_all36_lipid.prm
+parameters          ./toppar_water_ions.str
+#temperature         $temperature ; # Not to be used if restart.vel is defined
+binaryoutput        yes
+
+# Force-Field Parameters
+exclude       scaled1-4
+1-4scaling          1.0
+cutoff              CUTOFF
+switching           on
+switchdist          10.5
+pairlistdist        13.5
+
+# Integrator Parameters
+timestep            TM_STEP   
+rigidBonds          all ; # water bonds
+nonbondedFreq       1
+fullElectFrequency  2
+stepspercycle       10
+
+# for periodic boundary conditions, not to be used if restart.xsc is defined
+if {0} {
+cellBasisVector1   XX     0.   0.
+cellBasisVector2   0.    YY    0.
+cellBasisVector3   0.     0.   ZZ
+cellOrigin        0.0    0.0   ZCT
+}
+wrapAll on
+wrapwater on
+
+# Constant Pressure Control (variable volume)
+useGroupPressure      yes ; # needed for rigid bonds
+useFlexibleCell       no  ; # no for water box, yes for membrane
+useConstantArea       no  ; # no for water box, maybe for membrane
+
+if {$pres == 1} {
+langevinPiston        on
+langevinPistonTarget  1.01325      ; # pressure in bar -> 1 atm
+langevinPistonPeriod  200.         ; # oscillation period around 200 fs
+langevinPistonDecay   100.         ; # oscillation decay time of 100 fs
+langevinPistonTemp    $temperature ; # coupled to heat bath
+} else {
+langevinPiston        off
+}
+
+# Constant Temperature Control
+langevin            on            
+langevinDamping     GAMMA         
+langevinTemp        $temperature  
+langevinHydrogen    no            
+
+# use numbers with small integer factors: 2,3,5.
+PME                on
+PMEGridSizeX       XX
+PMEGridSizeY       YY
+PMEGridSizeZ       ZZ
+
+margin 0
+
+# Output
+outputName          $outputname
+
+restartfreq         REST_FREQ 
+dcdfreq             DCD_FREQ  
+xstFreq             XST_FREQ
+outputEnergies      OUT_ENER
+outputPressure      OUT_PRES
+
+#############################################################
+## EXTRA PARAMETERS                                        ##
+#############################################################
+
+
+# Absolute restraints, not from colvar
+if {$cons == 1} {
+constraints on
+consref $ref_umb
+conskfile $ref_umb
+conskcol B
+selectConstraints on
+selectConstrX on
+selectConstrY on
+selectConstrZ on
+} else {
+constraints off
+}
+
+
+colvars                on
+colvarsConfig          colvar.inp
+
+
+#############################################################
+## EXECUTION SCRIPT                                        ##
+#############################################################
+
+# Production
+
+run  PROD_STEPS 
