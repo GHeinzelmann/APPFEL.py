@@ -41,7 +41,7 @@ def fe_values(blocks, components, temperature, system, rest_wgt, rest, pmf_dist)
                 data.append(line)
           for k in range(0, blocks):
             fout = open('block%02d.dat' % (k+1), "w")
-            for t in range(k*int(round(len(data)/blocks)), (k+1)*int(round(len(data)/blocks))):
+            for t in range(k*int(round(len(data)//blocks)), (k+1)*int(round(len(data)//blocks))):
               fout.write(data[t])
             fout.close()
           os.chdir('../')
@@ -57,7 +57,7 @@ def fe_values(blocks, components, temperature, system, rest_wgt, rest, pmf_dist)
                 data.append(line)
           for k in range(0, blocks):
             fout = open('block%02d.dat' % (k+1), "w")
-            for t in range(k*int(round(len(data)/blocks)), (k+1)*int(round(len(data)/blocks))):
+            for t in range(k*int(round(len(data)//blocks)), (k+1)*int(round(len(data)//blocks))):
               fout.write(data[t])
             fout.close()
           os.chdir('../')
@@ -431,13 +431,17 @@ def fe_mbar(mode, comp, system, rest_file, temperature):
     print  ("Free Energy Differences (in units of kcal/mol)")
     print  ("%9s %8s %8s %12s %12s" % ('bin', 'f', 'df', 'deq', 'dfc'))
     datfile = open('./data/mbar-'+comp+'-'+mode+'.dat', 'w')
-    for k in range(K):
-      if comp != 'u': # Attach/release
-        print ("%10.5f %10.5f %10.5f %12.7f %12.7f" % ( rfc[k,0]/rfc[-1,0], Deltaf[0,k]/beta, dDeltaf[0,k]/beta, req[k,0], rfc[k,0] ))
-        datfile.write ( "%10.5f %10.5f %10.5f %12.7f %12.7f\n" % ( rfc[k,0]/rfc[-1,0], Deltaf[0,k]/beta, dDeltaf[0,k]/beta, req[k,0], rfc[k,0] ) )
-      else: # Umbrella/Translation
-        print ("%10.5f %10.5f %10.5f %12.7f %12.7f" % ( req[k,0], Deltaf[0,k]/beta, dDeltaf[0,k]/beta, req[k,0], rfc[k,0] ))
-        datfile.write ( "%10.5f %10.5f %10.5f %12.7f %12.7f\n" % ( req[k,0], Deltaf[0,k]/beta, dDeltaf[0,k]/beta, req[k,0], rfc[k,0] ) )
+    # Sort restraint and umbrella windows in crescent order
+    nwsu = np.argsort(req, axis=0)
+    nwsr = np.argsort(rfc, axis=0)
+    if comp != 'u': # Attach/release
+      for k in range(K):
+        print ("%10.5f %10.5f %10.5f %12.7f %12.7f" % ( rfc[nwsr[k],0]/rfc[-1,0], Deltaf[0,nwsr[k]]/beta, dDeltaf[0,nwsr[k]]/beta, req[nwsr[k],0], rfc[nwsr[k],0] ))
+        datfile.write ( "%10.5f %10.5f %10.5f %12.7f %12.7f\n" % ( rfc[nwsr[k],0]/rfc[-1,0], Deltaf[0,nwsr[k]]/beta, dDeltaf[0,nwsr[k]]/beta, req[nwsr[k],0], rfc[nwsr[k],0] ) )
+    else: # Umbrella/Translation
+      for k in range(K):
+        print ("%10.5f %10.5f %10.5f %12.7f %12.7f" % ( req[nwsu[k],0], Deltaf[0,nwsu[k]]/beta, dDeltaf[0,nwsu[k]]/beta, req[nwsu[k],0], rfc[nwsu[k],0] ))
+        datfile.write ( "%10.5f %10.5f %10.5f %12.7f %12.7f\n" % ( req[nwsu[k],0], Deltaf[0,nwsu[k]]/beta, dDeltaf[0,nwsu[k]]/beta, req[nwsu[k],0], rfc[nwsu[k],0] ) )
     datfile.close()
     print ("\n\n")
     
