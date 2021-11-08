@@ -15,9 +15,9 @@ def fe_values(blocks, components, temperature, system, rest_wgt, rest, pmf_dist)
 
 
     # Set initial values to zero
-    fe_a = fe_l = fe_t = fe_u = fe_c = fe_r = fe_b = 0
-    fb_a = fb_l = fb_t = fb_u = fb_c = fb_r = fb_b = 0
-    sd_a = sd_l = sd_t = sd_u = sd_c = sd_r = sd_b = 0
+    fe_a = fe_l = fe_t = fe_u = fe_c = fe_r = fe_b = fe_n = fe_m = 0
+    fb_a = fb_l = fb_t = fb_u = fb_c = fb_r = fb_b = fb_n = fb_m = 0
+    sd_a = sd_l = sd_t = sd_u = sd_c = sd_r = sd_b = sd_n = sd_m = 0
 
     # Acquire simulation data
     os.chdir('fe')
@@ -29,7 +29,7 @@ def fe_values(blocks, components, temperature, system, rest_wgt, rest, pmf_dist)
           data = []
           win = j
           os.chdir('%s%02d' %(comp, int(win)))
-          if comp == 't' and win == 0:
+          if (comp == 't' or comp == 'm' or comp == 'n') and win == 0:
             # Calculate analytical release of ligand
             k_tr = rest[3]
             k_qu = rest[4]
@@ -104,8 +104,12 @@ def fe_values(blocks, components, temperature, system, rest_wgt, rest, pmf_dist)
           fe_t = float(splitdata[1])
         elif comp == 'l':
           fe_l = float(splitdata[1])
+        elif comp == 'm':
+          fe_m = float(splitdata[1])
         elif comp == 'r':
           fe_r = -1.00*float(splitdata[1])
+        elif comp == 'n':
+          fe_n = -1.00*float(splitdata[1])
         elif comp == 'u':
           fe_u = float(splitdata[1])
 
@@ -128,6 +132,10 @@ def fe_values(blocks, components, temperature, system, rest_wgt, rest, pmf_dist)
           sd_t = np.std(b_data)
         elif comp == 'l':
           sd_l = np.std(b_data)
+        elif comp == 'm':
+          sd_m = np.std(b_data)
+        elif comp == 'n':
+          sd_n = np.std(b_data)
         elif comp == 'r':
           sd_r = np.std(b_data)
         elif comp == 'u':
@@ -154,16 +162,23 @@ def fe_values(blocks, components, temperature, system, rest_wgt, rest, pmf_dist)
             fb_t = float(splitdata[1])
           elif comp == 'l':
             fb_l = float(splitdata[1])
+          elif comp == 'm':
+            fb_m = float(splitdata[1])
           elif comp == 'r':
             fb_r = -1.00*float(splitdata[1])
+          elif comp == 'n':
+            fb_n = -1.00*float(splitdata[1])
           elif comp == 'u':
             fb_u = float(splitdata[1])
 
       fb_b = fe_b
       blck = fb_a + fb_l + fb_t + fb_u + fb_b + fb_c + fb_r
+      blckm = fb_m + fb_u + fb_b + fb_n
 
       # Write results for the blocks
       resfile = open('./Results/Res-b%02d.dat' %(k+1), 'w')
+      resfile.write('\n----------------------------------------------\n')
+      resfile.write('All components')
       resfile.write('\n----------------------------------------------\n\n')
       resfile.write('%-21s %-10s\n\n' % ('Component', 'Free Energy'))
       resfile.write('%-20s %8.2f\n' % ('Attach Receptor CF', fb_a))
@@ -175,16 +190,31 @@ def fe_values(blocks, components, temperature, system, rest_wgt, rest, pmf_dist)
       resfile.write('%-20s %8.2f\n\n' % ('Release Receptor CF', fb_r))
       resfile.write('%-20s %8.2f\n' % ('Binding free energy', blck))
       resfile.write('\n----------------------------------------------\n\n')
+      # Merged results
+      if os.path.exists('./m00/') or os.path.exists('./n00/'):
+        fb_rel = fb_b + fb_n
+        resfile.write('\n----------------------------------------------\n')
+        resfile.write('Merged components (express)')
+        resfile.write('\n----------------------------------------------\n\n')
+        resfile.write('%-21s %-10s\n\n' % ('Component', 'Free Energy'))
+        resfile.write('%-20s %8.2f\n' % ('Attach all', fb_m))
+        resfile.write('%-20s %8.2f\n' % ('Ligand Pulling', fb_u))
+        resfile.write('%-20s %8.2f\n\n' % ('Release all', fb_rel))
+        resfile.write('%-20s %8.2f\n' % ('Binding free energy', blckm))
+        resfile.write('\n----------------------------------------------\n\n')
       resfile.write('Energies in kcal/mol\n')
       resfile.close()
 
     # Write final results
     fe_tot = fe_a + fe_l + fe_t + fe_u + fe_b + fe_c + fe_r
+    fe_merged = fe_m + fe_u + fe_b + fe_n
     sd_tot = math.sqrt(sd_a**2 + sd_l**2 + sd_t**2 + sd_u**2 + sd_b**2 + sd_c**2 + sd_r**2)
+    sd_merged = math.sqrt(sd_m**2 + sd_u**2 + sd_n**2 + sd_b**2)
 
     resfile = open('./Results/Results.dat', 'w')
+    resfile.write('\n----------------------------------------------\n')
+    resfile.write('All components')
     resfile.write('\n----------------------------------------------\n\n')
-    resfile.write('PMF method:\n\n')
     resfile.write('%-21s %-10s %-4s\n\n' % ('Component', 'Free Energy', '(Error)'))
     resfile.write('%-20s %8.2f (%3.2f)\n' % ('Attach receptor CF', fe_a, sd_a))
     resfile.write('%-20s %8.2f (%3.2f)\n' % ('Attach ligand CF', fe_l, sd_l))
@@ -195,6 +225,18 @@ def fe_values(blocks, components, temperature, system, rest_wgt, rest, pmf_dist)
     resfile.write('%-20s %8.2f (%3.2f)\n\n' % ('Release Receptor CF', fe_r, sd_r))
     resfile.write('%-20s %8.2f (%3.2f)\n' % ('Binding free energy', fe_tot, sd_tot))
     resfile.write('\n----------------------------------------------\n\n')
+    # Merged results
+    if os.path.exists('./m00/') or os.path.exists('./n00/'):
+      fe_rel = fe_b + fe_n
+      resfile.write('\n----------------------------------------------\n')
+      resfile.write('Merged components (express)')
+      resfile.write('\n----------------------------------------------\n\n')
+      resfile.write('%-21s %-10s %-4s\n\n' % ('Component', 'Free Energy', '(Error)'))
+      resfile.write('%-20s %8.2f (%3.2f)\n' % ('Attach all', fe_m, sd_m))
+      resfile.write('%-20s %8.2f (%3.2f)\n' % ('Ligand Pulling', fe_u, sd_u))
+      resfile.write('%-20s %8.2f (%3.2f)\n\n' % ('Release all', fe_rel, sd_n))
+      resfile.write('%-20s %8.2f (%3.2f)\n' % ('Binding free energy', fe_merged, sd_merged))
+      resfile.write('\n----------------------------------------------\n\n')
     resfile.write('Energies in kcal/mol\n')
     resfile.close()
 
@@ -271,13 +313,19 @@ def fe_mbar(mode, comp, system, rest_file, temperature):
     rfc = np.zeros([K,R], np.float64)                 # restraint force constant
     rfc1 = np.zeros([K,R], np.float64)                 # restraint force constant
     rfc2 = np.zeros([K,R], np.float64)                 # restraint force constant
+    rfc3 = np.zeros([K,R], np.float64)                 # restraint force constant
+    rfc4 = np.zeros([K,R], np.float64)                 # restraint force constant
     fcmax = np.zeros([R], np.float64)                 # full force constant value used during umbrella portion of work 
     req = np.zeros([K,R], np.float64)                 # restraint target value
     req1 = np.zeros([K,R], np.float64)                 # restraint target value
     req2 = np.zeros([K,R], np.float64)                 # restraint target value
+    req3 = np.zeros([K,R], np.float64)                 # restraint target value
+    req4 = np.zeros([K,R], np.float64)                 # restraint target value
     val = np.zeros([N_max,K,R], np.float64)           # value of the restrained variable at each frame n
     val1 = np.zeros([N_max,K,R], np.float64)           # value of the restrained variable at each frame n
     val2 = np.zeros([N_max,K,R], np.float64)           # value of the restrained variable at each frame n
+    val3 = np.zeros([N_max,K,R], np.float64)           # value of the restrained variable at each frame n
+    val4 = np.zeros([N_max,K,R], np.float64)           # value of the restrained variable at each frame n
     g = np.zeros([K], np.float64)
     u=np.zeros([N_max], np.float64)
 
@@ -285,7 +333,7 @@ def fe_mbar(mode, comp, system, rest_file, temperature):
     r=0
     for k in range(K):
       # Read Equilibrium Value and Force Constant
-      if comp == 't':
+      if comp == 't' or comp == 'm':
         with open('./'+comp+'%02.0f/colvar.inp' % k, 'r') as f:
           for line in f:
              if 'posit2' in line:
@@ -317,6 +365,27 @@ def fe_mbar(mode, comp, system, rest_file, temperature):
                  if len(cols) != 0 and (cols[0] == "forceConstant"):
                    rfc2[k,r] = float(cols[1])/2
                    break
+        if comp == 'm':       
+          with open('./'+comp+'%02.0f/colvar.inp' % k, 'r') as f:
+            for line in f:
+               if 'rmsd1' in line:
+                 for line in f:
+                   cols = line.split()
+                   if len(cols) != 0 and (cols[0] == "centers"):
+                     req3[k,r] = float(cols[1])
+                   if len(cols) != 0 and (cols[0] == "forceConstant"):
+                     rfc3[k,r] = float(cols[1])/2
+                     break
+          with open('./'+comp+'%02.0f/colvar.inp' % k, 'r') as f:
+            for line in f:
+               if 'rmsd2' in line:
+                 for line in f:
+                   cols = line.split()
+                   if len(cols) != 0 and (cols[0] == "centers"):
+                     req4[k,r] = float(cols[1])
+                   if len(cols) != 0 and (cols[0] == "forceConstant"):
+                     rfc4[k,r] = float(cols[1])/2
+                     break
       elif comp == 'c' or comp == 'l':
         with open('./'+comp+'%02.0f/colvar.inp' % k, 'r') as f:
           for line in f:
@@ -328,7 +397,7 @@ def fe_mbar(mode, comp, system, rest_file, temperature):
                  if len(cols) != 0 and (cols[0] == "forceConstant"):
                    rfc[k,r] = float(cols[1])/2
                    break
-      elif comp == 'a' or comp == 'r':
+      elif comp == 'a' or comp == 'r' or comp == 'n':
         with open('./'+comp+'%02.0f/colvar.inp' % k, 'r') as f:
           for line in f:
              if 'rmsd1' in line:
@@ -339,6 +408,17 @@ def fe_mbar(mode, comp, system, rest_file, temperature):
                  if len(cols) != 0 and (cols[0] == "forceConstant"):
                    rfc[k,r] = float(cols[1])/2
                    break
+        if comp == 'n':       
+          with open('./'+comp+'%02.0f/colvar.inp' % k, 'r') as f:
+            for line in f:
+               if 'rmsd2' in line:
+                 for line in f:
+                   cols = line.split()
+                   if len(cols) != 0 and (cols[0] == "centers"):
+                     req1[k,r] = float(cols[1])
+                   if len(cols) != 0 and (cols[0] == "forceConstant"):
+                     rfc1[k,r] = float(cols[1])/2
+                     break
       elif comp == 'u':
         with open('./'+comp+'%02.0f/colvar.inp' % k, 'r') as f:
           for line in f:
@@ -369,6 +449,15 @@ def fe_mbar(mode, comp, system, rest_file, temperature):
             val[n,k,r] = float(cols[10])
             val1[n,k,r] = float(cols[11])
             val2[n,k,r] = math.acos(float(cols[2]))
+          elif comp == 'm':
+            val[n,k,r] = float(cols[12])
+            val1[n,k,r] = float(cols[13])
+            val2[n,k,r] = math.acos(float(cols[4]))
+            val3[n,k,r] = float(cols[1])
+            val4[n,k,r] = float(cols[2])
+          elif comp == 'n':
+            val[n,k,r] = float(cols[1])
+            val1[n,k,r] = float(cols[2])
           elif comp == 'u':
             val[n,k,r] = float(cols[2])
           else:
@@ -412,12 +501,18 @@ def fe_mbar(mode, comp, system, rest_file, temperature):
       for l in range(K):
         if comp == 't':
           Upot[k,l,0:Neff[k]] = np.sum(beta*rfc2[l,0:R]*((val2[0:Neff[k],k,0:R])**2), axis=1)+np.sum(beta*rfc1[l,0:R]*((val1[0:Neff[k],k,0:R]-req1[l,0:R])**2), axis=1)+np.sum(beta*rfc[l,0:R]*((val[0:Neff[k],k,0:R]-req[l,0:R])**2), axis=1)
+        elif comp == 'm':
+          Upot[k,l,0:Neff[k]] = np.sum(beta*rfc2[l,0:R]*((val2[0:Neff[k],k,0:R])**2), axis=1)+np.sum(beta*rfc1[l,0:R]*((val1[0:Neff[k],k,0:R]-req1[l,0:R])**2), axis=1)+np.sum(beta*rfc[l,0:R]*((val[0:Neff[k],k,0:R]-req[l,0:R])**2), axis=1)+np.sum(beta*rfc3[l,0:R]*((val3[0:Neff[k],k,0:R]-req3[l,0:R])**2), axis=1)+np.sum(beta*rfc4[l,0:R]*((val4[0:Neff[k],k,0:R]-req4[l,0:R])**2), axis=1)
+        elif comp == 'n':
+          Upot[k,l,0:Neff[k]] = np.sum(beta*rfc1[l,0:R]*((val1[0:Neff[k],k,0:R]-req1[l,0:R])**2), axis=1)+np.sum(beta*rfc[l,0:R]*((val[0:Neff[k],k,0:R]-req[l,0:R])**2), axis=1)
         else:
           Upot[k,l,0:Neff[k]] = np.sum(beta*rfc[l,0:R]*((val[0:Neff[k],k,0:R]-req[l,0:R])**2), axis=1)
 
     val=[]
     val1=[]
     val2=[]
+    val3=[]
+    val4=[]
 
     print  ("Running MBAR... ") 
     mbar = MBAR(Upot, Neff, initialize='BAR')

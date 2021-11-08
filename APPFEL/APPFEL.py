@@ -10,11 +10,27 @@ from lib import build
 from lib import setup
 from lib import scripts 
 from lib import analysis 
-#from lib import analysis
 
 pmf_dist = []
 rest_wgt = []
 components = []  
+
+a_steps1 = 0
+a_steps2 = 0
+l_steps1 = 0
+l_steps2 = 0
+t_steps1 = 0
+t_steps2 = 0
+c_steps1 = 0
+c_steps2 = 0
+r_steps1 = 0
+r_steps2 = 0
+u_steps1 = 0
+u_steps2 = 0
+m_steps1 = 0
+m_steps2 = 0
+n_steps1 = 0
+n_steps2 = 0
 
 # Read arguments that define input file and stage
 if len(sys.argv) < 5:
@@ -75,6 +91,14 @@ for i in range(0, len(lines)):
             r_steps1 = scripts.check_input('int', lines[i][1], input_file, lines[i][0]) 
         elif lines[i][0] == 'r_steps2':
             r_steps2 = scripts.check_input('int', lines[i][1], input_file, lines[i][0]) 
+        elif lines[i][0] == 'm_steps1':
+            m_steps1 = scripts.check_input('int', lines[i][1], input_file, lines[i][0]) 
+        elif lines[i][0] == 'm_steps2':
+            m_steps2 = scripts.check_input('int', lines[i][1], input_file, lines[i][0]) 
+        elif lines[i][0] == 'n_steps1':
+            n_steps1 = scripts.check_input('int', lines[i][1], input_file, lines[i][0]) 
+        elif lines[i][0] == 'n_steps2':
+            n_steps2 = scripts.check_input('int', lines[i][1], input_file, lines[i][0]) 
         elif lines[i][0] == 'system':
             system = lines[i][1]
         elif lines[i][0] == 'rec_chain':
@@ -87,6 +111,10 @@ for i in range(0, len(lines)):
             elif lines[i][1].lower() == 'pmf':
                 fe_type = lines[i][1].lower()
             elif lines[i][1].lower() == 'all':
+                fe_type = lines[i][1].lower()
+            elif lines[i][1].lower() == 'express':
+                fe_type = lines[i][1].lower()
+            elif lines[i][1].lower() == 'merged':
                 fe_type = lines[i][1].lower()
             elif lines[i][1].lower() == 'custom':
                 fe_type = lines[i][1].lower()
@@ -188,6 +216,10 @@ elif fe_type == 'pmf':
   components = ['u'] 
 elif fe_type == 'all':
   components = ['c', 'a', 'l', 't', 'r', 'u'] 
+elif fe_type == 'express':
+  components = [ 'm', 'n', 'u' ] 
+elif fe_type == 'merged':
+  components = [ 'm', 'n' ] 
 
 # Define number of steps for all stages
 dic_steps1 = {}
@@ -202,6 +234,10 @@ dic_steps1['c'] = c_steps1
 dic_steps2['c'] = c_steps2
 dic_steps1['r'] = r_steps1
 dic_steps2['r'] = r_steps2
+dic_steps1['m'] = m_steps1
+dic_steps2['m'] = m_steps2
+dic_steps1['n'] = n_steps1
+dic_steps2['n'] = n_steps2
 dic_steps1['u'] = u_steps1
 dic_steps2['u'] = u_steps2
 

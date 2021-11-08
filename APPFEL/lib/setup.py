@@ -309,7 +309,67 @@ def sim_fe(comp, system, rest, water_model, boxsize, neut, ion_def, rec_chain, l
           conf_run.close()
         os.chdir('../')    
       os.chdir('../../')
-    elif (comp == 'a' or comp == 'l' or comp == 't'):
+    elif (comp == 'n'):   
+      os.chdir('../')
+      rel_dist = float(bulk_dist+4.00)
+      for k in range(0, len(rest_wgt)):
+        weight = rest_wgt[k]
+        win = k
+        if not os.path.exists('%s%02d' %(comp, int(win))):
+          os.makedirs('%s%02d' %(comp, int(win)))
+        os.chdir('%s%02d' %(comp, int(win)))
+        shutil.copy("../input_files/conf_rest", './')
+        shutil.copy("../input_files/colv-%s.inp" %comp, './')
+        for filename in glob.glob(os.path.join('../input_files/', 'out_smd.restart.*')):
+          shutil.copy(filename, './')
+        shutil.copy("../input_files/refumb0.pdb", './')
+        shutil.copy("../input_files/atoms.pdb", './')
+        shutil.copy("../input_files/ionized.pdb", './')
+        shutil.copy("../input_files/ionized.psf", './')
+        shutil.copy('../input_files/par_all36_lipid.prm', './')
+        shutil.copy('../input_files/par_all36_prot.prm', './')
+        shutil.copy("../input_files/run-rest1.bash", './')
+        shutil.copy("../input_files/run-rest2.bash", './')
+        shutil.copy('../input_files/toppar_water_ions.str', './')
+        conf_min = open('./conf_rest-00', 'wt')
+        conf_min.write('######################################################\n')
+        conf_min.write('## INPUT AND OUTPUT FILES                           ##\n')
+        conf_min.write('######################################################\n')
+        conf_min.write('set input       rest-00\n')
+        conf_min.write('set input_pr    smd\n')
+        conf_min.close()
+        fin = open("./colv-%s.inp" %comp, "rt")
+        data = fin.read()
+        fca1=float(rest[2]*weight)/100
+        fca2=float(rest[5]*weight)/100
+        data = data.replace('xxxx', cx).replace('yyyy', cy).replace('zzzz', cz).replace('llxx', '%8.6f' %lx).replace('llyy', '%8.6f' %ly).replace('llzz', '%8.6f' %lz).replace('COLVAR_FREQ', clvfr).replace('REC_TR_FC', '%5.2f' %rest[0]).replace('REC_OR_FC', '%5.2f' %rest[1]).replace('REC_RM_FC', '%5.2f' %fca1).replace('LIG_TR_FC', '%5.2f' %rest[3]).replace('LIG_OR_FC', '%5.2f' %rest[4]).replace('LIG_RM_FC', '%5.2f' %fca2).replace('PMF_CENT', '%4.2f' %rel_dist)  
+        print('Merged restraints window %s%02d - Force constants %4.2f (Rec-rmsd), %4.2f (Lig-rmsd)' %(comp, int(win), fca1, fca2))
+        fin.close()
+        fout = open("colvar.inp", "wt")
+        fout.write(data)
+        fout.close()
+        with open("conf_rest", "rt") as fin:
+          with open('./conf_rest-00', 'a') as fout:
+            for line in fin:
+              fout.write(line.replace('PROD_STEPS', '%s' %steps1))
+        conf_min.close()
+        for i in range(1, num_sim):
+          pr=i-1
+          conf_run = open('./conf_rest-%02d' %(int(i)), 'wt')
+          conf_run.write('######################################################\n')
+          conf_run.write('## INPUT AND OUTPUT FILES                           ##\n')
+          conf_run.write('######################################################\n')
+          conf_run.write('set input       rest-%02d\n' %(int(i)))
+          conf_run.write('set input_pr    rest-%02d\n' %(int(pr)))
+          conf_run.close()
+          with open("conf_rest", "rt") as fin:
+            with open('./conf_rest-%02d' %(int(i)), 'a') as fout:
+              for line in fin:
+                fout.write(line.replace('PROD_STEPS', '%s' %steps2))
+          conf_run.close()
+        os.chdir('../')    
+      os.chdir('../../')    
+    elif (comp == 'a' or comp == 'l' or comp == 't' or comp == 'm'):
       os.chdir('../')
       for k in range(0, len(rest_wgt)):
         weight = rest_wgt[k]
@@ -352,6 +412,13 @@ def sim_fe(comp, system, rest, water_model, boxsize, neut, ion_def, rec_chain, l
           fca2=float(rest[4]*weight)/100
           data = data.replace('xxxx', cx).replace('yyyy', cy).replace('zzzz', cz).replace('llxx', '%8.6f' %lx).replace('llyy', '%8.6f' %ly).replace('llzz', '%8.6f' %lz).replace('COLVAR_FREQ', clvfr).replace('REC_TR_FC', '%5.2f' %rest[0]).replace('REC_OR_FC', '%5.2f' %rest[1]).replace('REC_RM_FC', '%5.2f' %rest[2]).replace('LIG_TR_FC', '%5.2f' %fca1).replace('LIG_OR_FC', '%5.2f' %fca2).replace('LIG_RM_FC', '%5.2f' %rest[5]) 
           print('Ligand translational/rotational restraints window %s%02d - Force constants %4.2f (tr), %4.2f (rot)' %(comp, int(win), fca1, fca2))
+        elif (comp == 'm'):
+          fca1=float(rest[2]*weight)/100
+          fca2=float(rest[3]*weight)/100
+          fca3=float(rest[4]*weight)/100
+          fca4=float(rest[5]*weight)/100
+          data = data.replace('xxxx', cx).replace('yyyy', cy).replace('zzzz', cz).replace('llxx', '%8.6f' %lx).replace('llyy', '%8.6f' %ly).replace('llzz', '%8.6f' %lz).replace('COLVAR_FREQ', clvfr).replace('REC_TR_FC', '%5.2f' %rest[0]).replace('REC_OR_FC', '%5.2f' %rest[1]).replace('REC_RM_FC', '%5.2f' %fca1).replace('LIG_TR_FC', '%5.2f' %fca2).replace('LIG_OR_FC', '%5.2f' %fca3).replace('LIG_RM_FC', '%5.2f' %fca4) 
+          print('Merged restraints window %s%02d - Force constants %4.2f (Rec-rmsd), %4.2f (Lig-tr), %4.2f (Lig-rot), %4.2f (Lig-rmsd)' %(comp, int(win), fca1, fca2, fca3, fca4))
         fin.close()
         fout = open("colvar.inp", "wt")
         fout.write(data)
@@ -676,7 +743,7 @@ def sim_lig(comp, system, rest, water_model, boxsize_ligand, neut, ion_def, lig_
         conf_min.close()
         fin = open("./colv-%s.inp" %comp, "rt")
         data = fin.read()
-        fca=float(rest[2]*weight)/100
+        fca=float(rest[5]*weight)/100
         data = data.replace('COLVAR_FREQ', clvfr).replace('LIG_RM_FC', '%5.2f' %fca) 
         print('Ligand RMSD restraints window %s%02d - Force constant %4.2f ' %(comp, int(win), fca))
         fin.close()
