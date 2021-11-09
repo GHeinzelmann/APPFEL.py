@@ -41,12 +41,11 @@ water_model      = TIP3P  # Water model (SPCE, TIP4PEW or TIP3P)
 boxsize_x        = 60     # Simulation box size in the x direction
 boxsize_y        = 60     # Simulation box size in the y direction
 boxsize_z        = 90     # Simulation box size in the z direction (pulling direction)
-box_z_center     = 15     # Simulation box size in the z direction (pulling direction)
+box_z_center     = 15     # Center of the box on the z direction. 
 boxsize_ligand   = 60     # Simulation x, y and z box size for ligand only
 
 # Counterions 
 
-neutralize_only = no       # neutralize only or also ionize
 cation          = SOD      # cation for neutralization/ionization                
 anion           = CLA      # anion  for neutralization/ionization   
 ion_conc        = 0.15     # desired ion concentration in mol/L
