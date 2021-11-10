@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 
 #############################################################################################################
-########## Input file for BAT.py, for fully automated absolute binding free energy calculations ##########
+########## Input file for APPFEL.py, for fully automated absolute binding free energy calculations ##########
 #############################################################################################################
 
 # Structure information
@@ -14,7 +14,7 @@ lig_chain     =  B   # Chain identified as ligand in the original complex file (
 
 # Variables for setting free energy calculations, also used on analysis       
 
-fe_type = express        # Type of free energy calculations (rest, pmf, all, custom)
+fe_type = express        # Type of free energy calculations (rest, pmf, all, merged, express, custom)
 
 components = [  u  ] # Used with custom option for fe_type
 
@@ -24,7 +24,7 @@ pmf_dist  = [ 0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3
 
 blocks = 5     # Number of blocks for block data analysis
 
-num_sim = 10   # Number of production simulations (work in progress)
+num_sim = 10   # Number of production simulations - work in progress
 
 # Force constants
 
@@ -37,7 +37,7 @@ lig_rmsd_force       =    50.0   # Ligand conformational RMSD spring constant - 
 
 # Water model, number and box size in the x and y direction
 
-water_model      = TIP3P  # Water model (SPCE, TIP4PEW or TIP3P)
+water_model      = TIP3P  # Water model (SPCE, TIP4PEW or TIP3P) -  still need to implement other models
 boxsize_x        = 60     # Simulation box size in the x direction
 boxsize_y        = 60     # Simulation box size in the y direction
 boxsize_z        = 90     # Simulation box size in the z direction (pulling direction)
@@ -46,9 +46,9 @@ boxsize_ligand   = 60     # Simulation x, y and z box size for ligand only
 
 # Counterions 
 
-cation          = SOD      # cation for neutralization/ionization                
-anion           = CLA      # anion  for neutralization/ionization   
-ion_conc        = 0.15     # desired ion concentration in mol/L
+cation          = SOD      # cation for neutralization/ionization - need to implement other ion options               
+anion           = CLA      # anion  for neutralization/ionization - need to implement other ion options  
+ion_conc        = 0.15     # desired ion concentration in mol/L - choose 0.0 for neutralization only
 
 # Simulation parameters
 
@@ -101,4 +101,4 @@ timestep = 2                    # simulation ime step in fs
 
 # Force field options for receptor and ligand
 
-force_field = CHARMM
+force_field = CHARMM   # - still need to implement other FFs
