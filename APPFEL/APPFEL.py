@@ -135,9 +135,6 @@ for i in range(0, len(lines)):
             else:
                 print('Water model not supported. Please choose TIP3P, TIP4PEW or SPCE')
                 sys.exit(1)
-            else:
-                print('Wrong input! Please choose neutralization only or add extra ions')
-                sys.exit(1)
         elif lines[i][0] == 'cation':
             cation = lines[i][1]
         elif lines[i][0] == 'anion':
