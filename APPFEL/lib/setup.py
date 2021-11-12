@@ -153,7 +153,7 @@ def sim_smd(system, rest, boxsize, rec_chain, rec_restr, lig_chain, lig_restr, t
     os.chdir('../')
 
 
-def sim_fe(comp, system, rest, water_model, boxsize, neut, ion_def, rec_chain, lig_chain, lig_restr, temperature, steps1, steps2, pmf_dist, rest_wgt, num_sim, rstfreq, dcdfreq, xstfreq, outpr, outen, clvfr, cutoff, gamma, tstep, ffield):
+def sim_fe(comp, system, rest, water_model, boxsize, ion_def, rec_chain, lig_chain, lig_restr, temperature, steps1, steps2, pmf_dist, rest_wgt, num_sim, rstfreq, dcdfreq, xstfreq, outpr, outen, clvfr, cutoff, gamma, tstep, ffield):
 
 
     # Create free energy directory
@@ -447,7 +447,7 @@ def sim_fe(comp, system, rest, water_model, boxsize, neut, ion_def, rec_chain, l
 
 
 
-def sim_rec(comp, system, rest, water_model, boxsize, neut, ion_def, rec_chain, rec_restr, temperature, steps1, steps2, rest_wgt, num_sim, rstfreq, dcdfreq, xstfreq, outpr, outen, clvfr, cutoff, gamma, tstep, ffield):
+def sim_rec(comp, system, rest, water_model, boxsize, ion_def, rec_chain, rec_restr, temperature, steps1, steps2, rest_wgt, num_sim, rstfreq, dcdfreq, xstfreq, outpr, outen, clvfr, cutoff, gamma, tstep, ffield):
      
     # Create free energy directory
     if not os.path.exists('fe'):
@@ -518,7 +518,7 @@ def sim_rec(comp, system, rest, water_model, boxsize, neut, ion_def, rec_chain, 
           shutil.copy(filename, './')
         for filename in glob.glob(os.path.join('../../../build_files/', 'top*')):
           shutil.copy(filename, './')
-        build.build_receptor(system, rec_chain, rec_restr, water_model, boxsize, neut, ion_def)
+        build.build_receptor(system, rec_chain, rec_restr, water_model, boxsize, ion_def)
         shutil.copy('../input_files/toppar_water_ions.str', './')
         conf_min = open('./conf_rest-00', 'wt')
         conf_min.write('######################################################\n')
@@ -610,7 +610,7 @@ def sim_rec(comp, system, rest, water_model, boxsize, neut, ion_def, rec_chain, 
     os.chdir('../../')    
 
 
-def sim_lig(comp, system, rest, water_model, boxsize_ligand, neut, ion_def, lig_chain, lig_restr, temperature, steps1, steps2, rest_wgt, num_sim, rstfreq, dcdfreq, xstfreq, outpr, outen, clvfr, cutoff, gamma, tstep, ffield):
+def sim_lig(comp, system, rest, water_model, boxsize_ligand, ion_def, lig_chain, lig_restr, temperature, steps1, steps2, rest_wgt, num_sim, rstfreq, dcdfreq, xstfreq, outpr, outen, clvfr, cutoff, gamma, tstep, ffield):
      
     # Create free energy directory
     if not os.path.exists('fe'):
@@ -681,7 +681,7 @@ def sim_lig(comp, system, rest, water_model, boxsize_ligand, neut, ion_def, lig_
           shutil.copy(filename, './')
         for filename in glob.glob(os.path.join('../../../build_files/', 'top*')):
           shutil.copy(filename, './')
-        build.build_ligand(system, lig_chain, lig_restr, water_model, boxsize_ligand, neut, ion_def)
+        build.build_ligand(system, lig_chain, lig_restr, water_model, boxsize_ligand, ion_def)
         shutil.copy('../input_files/toppar_water_ions.str', './')
         conf_min = open('./conf_rest-00', 'wt')
         conf_min.write('######################################################\n')

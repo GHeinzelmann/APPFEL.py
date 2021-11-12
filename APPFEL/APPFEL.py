@@ -135,11 +135,6 @@ for i in range(0, len(lines)):
             else:
                 print('Water model not supported. Please choose TIP3P, TIP4PEW or SPCE')
                 sys.exit(1)
-        elif lines[i][0] == 'neutralize_only':
-            if lines[i][1].lower() == 'yes':
-                neut = 'yes'
-            elif lines[i][1].lower() == 'no':
-                neut = 'no'
             else:
                 print('Wrong input! Please choose neutralization only or add extra ions')
                 sys.exit(1)
@@ -254,7 +249,7 @@ ion_def = [cation, anion, ion_conc]
 if stage == 'equil':
     print('Setting up '+str(system))
     # Create aligned initial complex
-    build.build_equil(system, rec_chain, lig_chain, water_model, boxsize, neut, ion_def)
+    build.build_equil(system, rec_chain, lig_chain, water_model, boxsize, ion_def)
     # Prepare simulation files
     setup.sim_equil(system, rest, boxsize, rec_chain, temperature, eq_steps, rstfreq, dcdfreq, xstfreq, outpr, outen, clvfr, cutoff, gamma, tstep, ffield)
 elif stage == 'smd':
@@ -269,15 +264,15 @@ elif stage == 'fe':
       if (comp != 'r' and comp != 'c'):
         steps1 = dic_steps1[comp]
         steps2 = dic_steps2[comp]
-        setup.sim_fe(comp, system, rest, water_model, boxsize, neut, ion_def, rec_chain, lig_chain, lig_restr, temperature, steps1, steps2, pmf_dist, rest_wgt, num_sim, rstfreq, dcdfreq, xstfreq, outpr, outen, clvfr, cutoff, gamma, tstep, ffield)
+        setup.sim_fe(comp, system, rest, water_model, boxsize, ion_def, rec_chain, lig_chain, lig_restr, temperature, steps1, steps2, pmf_dist, rest_wgt, num_sim, rstfreq, dcdfreq, xstfreq, outpr, outen, clvfr, cutoff, gamma, tstep, ffield)
       elif (comp == 'r'):
         steps1 = dic_steps1[comp]
         steps2 = dic_steps2[comp]
-        setup.sim_rec(comp, system, rest, water_model, boxsize, neut, ion_def, rec_chain, rec_restr, temperature, steps1, steps2, rest_wgt, num_sim, rstfreq, dcdfreq, xstfreq, outpr, outen, clvfr, cutoff, gamma, tstep, ffield)
+        setup.sim_rec(comp, system, rest, water_model, boxsize, ion_def, rec_chain, rec_restr, temperature, steps1, steps2, rest_wgt, num_sim, rstfreq, dcdfreq, xstfreq, outpr, outen, clvfr, cutoff, gamma, tstep, ffield)
       elif (comp == 'c'):
         steps1 = dic_steps1[comp]
         steps2 = dic_steps2[comp]
-        setup.sim_lig(comp, system, rest, water_model, boxsize_ligand, neut, ion_def, lig_chain, lig_restr, temperature, steps1, steps2, rest_wgt, num_sim, rstfreq, dcdfreq, xstfreq, outpr, outen, clvfr, cutoff, gamma, tstep, ffield)
+        setup.sim_lig(comp, system, rest, water_model, boxsize_ligand, ion_def, lig_chain, lig_restr, temperature, steps1, steps2, rest_wgt, num_sim, rstfreq, dcdfreq, xstfreq, outpr, outen, clvfr, cutoff, gamma, tstep, ffield)
 elif stage == 'analysis':
   # Free energies MBAR and analytical calculations
   analysis.fe_values(blocks, components, temperature, system, rest_wgt, rest, pmf_dist)

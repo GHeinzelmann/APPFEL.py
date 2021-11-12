@@ -9,7 +9,7 @@ import subprocess as sp
 import sys as sys
 from lib import scripts as scripts
 
-def build_equil(system, rec_chain, lig_chain, water_model, boxsize, neut, ion_def):
+def build_equil(system, rec_chain, lig_chain, water_model, boxsize, ion_def):
 
 
     # Create equilibrium directory
@@ -72,7 +72,7 @@ def build_equil(system, rec_chain, lig_chain, water_model, boxsize, neut, ion_de
     os.chdir('../')
 
 
-def build_receptor(system, rec_chain, rec_restr, water_model, boxsize, neut, ion_def):
+def build_receptor(system, rec_chain, rec_restr, water_model, boxsize, ion_def):
 
 
     # Get box dimensions and ion concentration
@@ -107,7 +107,7 @@ def build_receptor(system, rec_chain, rec_restr, water_model, boxsize, neut, ion
           fout.write(line.replace('REC_RESTR', rec_restr))
     sp.call('vmd -dispdev text -e setup.tcl', shell=True)
 
-def build_ligand(system, lig_chain, lig_restr, water_model, boxsize_ligand, neut, ion_def):
+def build_ligand(system, lig_chain, lig_restr, water_model, boxsize_ligand, ion_def):
 
 
     # Get box dimensions and ion concentration
