@@ -11,7 +11,7 @@ APPFEL can perform absolute binding free energy (ABFE) calculations starting onl
 
 To use APPFEL.py, download the files from this repository, which already contain an example of a protein-protein system. In order to perform all the steps in the calculation, the following programs must be installed and in your path:
 
-NAMD 2.14 (NAnoscale Molecular Dynamics)[1] - https://www.ks.uiuc.edu/Development/Download/download.cgi?PackageName=NAMD  
+NAMD 2.14 (NAnoscale Molecular Dynamics)[1] - https://www.ks.uiuc.edu/Development/Download/download.cgi?PackageName=NAMD &dagger;
 
 VMD (Visual Molecular Dynamics) [2] - https://www.ks.uiuc.edu/Development/Download/download.cgi?PackageName=VMD
 
@@ -19,13 +19,15 @@ MUSTANG v3.2.3 (MUltiple (protein) STructural AligNment alGorithm) [3] - http://
 
 AmberTools20 or later [4] - http://ambermd.org/AmberTools.php
 
+&dagger; If the user has a graphics processing unit (GPU), we recommend downloading the CUDA version of NAMD.
+
 The folder APPFEL/strucures contains the initial structure of the complex, which will be the starting point of the calculations. The APPFEL/build\_files and APPFEL/namd\_files folders contain the CHARMM36 topology and parameters needed to build and simulate the systems. Additional force-field options, such as AMBER, will be added to APPFEL workflow in the near future. 
 
 Even though Ambertools is not needed for parameter generation at the moment, the python3 version from AMBER's miniconda contains all the necessary modules to run APPFEL, such as *numpy* and *scipy*. So installing Ambertools might be simpler when compared to downloading, installing and adding each module to the python path. 
 
 # Running a sample calculation
 
-In this tutorial we will perform a sample calculation on a well-known protein-protein system, which will be carried out inside the ./APPFEL/ folder from the APPFEL distribution. The whole procedure requires no manual steps and is divided in four stages: equilibration, steered molecular dynamics (SMD), running the free energy windows, and analyzing them to obtain the desired binding free energy.  
+In this tutorial we will perform a sample calculation on a well-known protein-protein system (PDB code 1brs), which will be carried out inside the ./APPFEL/ folder from the APPFEL distribution. The whole procedure requires no manual steps and is divided in four stages: equilibration, steered molecular dynamics (SMD), running the free energy windows, and analyzing them to obtain the desired binding free energy.  
 
 ## Equilibration
 
@@ -37,12 +39,29 @@ APPFEL is compatible with python 3.8 versions. If you have another version, or y
 
 $AMBERHOME/miniconda/bin/python APPFEL.py -i input.in -s equil
 
-This command will create an ./equil/ folder, with another folder inside for the particular complex chosen for the calculations. In order to run the simulations locally, there is an example bash script called *run-eq.bash* inside the equil/\<complex-name\> folder. The users can also create their own PBS script to run the simulations in a queue system such as TORQUE, which will depend on their server particular definitions. 
+This command will create an ./equil/1brs/ folder, in which the equilibrium simulations will be performed. In order to run the simulations locally, APPFEL provides an example bash script called *run-eq.bash*, which can be edited to match the user's hardware, such as the number of available CPUs. One can also create their own PBS script to run the simulations in a queue system such as TORQUE, using their particular server definitions. 
+
+## SMD
+
+The SMD stage starts from the last state from equilibrium simulations, pulling the ligand from the receptor binding site along the *+z* direction, until the final distance defined by the umbrella sampling windows. To run this step, inside the ./APPFEL/ folder type:
+
+python APPFEL.py -i input.in -s smd
+
+This command will create an ./smd/1brs/ folder, in which there is also an example bash script called *run-smd.bash*. This script can be edited or replaced to match the user's preferences, the same way as with the equilibrium stage above. 
+
+## Free energy windows 
+
+Once the SMD simulation is concluded, APPFEL has all the needed input files to create all the needed simulation windows for the binding free energy calculations. In order to create these windows, type inside the ./APPFEL folder:
+
+python APPFEL.py -i input.in -s fe
+
+This command will create an ./fe/1brs/ folder, in which all of the free energy windows will be placed, in folders identified by the free energy component letter followed by a number. In the present example we will use all of the components, both for the application and removal of restraints, as well as the umbrella sampling procedure. Other options are available, such as allowing the application of multiple restraints using a single set of windows. More details on the free energy components can be found in the APPFEL User Guide.
+
+Once the windows are created, it is time to perform the needed simulations. The ./APPFEL/namd_files folder provides a bash script to run the simulations for all windows starting from the ./fe/1brs/ folder, called *run-fe.bash*. This script might have to be changed or replaced, depending on the user's setup to run the simulations, which is a simple procedure that only has to be done once. 
 
 # Acknowledgments
 
 Germano Heinzelmann thanks FAPESC and CNPq for the research grants.
-
 
 # References
 
