@@ -14,7 +14,7 @@ lig_chain     =  F   # Chain identified as ligand in the original complex file (
 
 # Variables for setting free energy calculations, also used on analysis       
 
-fe_type = custom        # Type of free energy calculations (rest, pmf, all, merged, express, custom)
+fe_type = all        # Type of free energy calculations (rest, pmf, all, merged, express, custom)
 
 components = [ u ] # Used with custom option for fe_type
 
