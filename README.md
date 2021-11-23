@@ -9,9 +9,9 @@ APPFEL can perform absolute binding free energy (ABFE) calculations starting onl
 
 # Getting started
 
-To use APPFEL.py, download the files from this repository, which already contain an example of a protein-protein system. In order to perform all the steps in the calculation, the following programs must be installed and in your path:
+To use APPFEL.py, download the files from this repository, which already contain an example of a protein-protein system that will be used for this tutorial. In order to perform all the steps in the calculation, the following programs must be installed and in your path:
 
-NAMD 2.14 (NAnoscale Molecular Dynamics)[1] - https://www.ks.uiuc.edu/Development/Download/download.cgi?PackageName=NAMD &dagger;
+NAMD (NAnoscale Molecular Dynamics) versions 2.13 or 2.14 [1] - https://www.ks.uiuc.edu/Development/Download/download.cgi?PackageName=NAMD - *If the user has a graphics processing unit (GPU), we recommend downloading the CUDA version of the NAMD software.*
 
 VMD (Visual Molecular Dynamics) [2] - https://www.ks.uiuc.edu/Development/Download/download.cgi?PackageName=VMD
 
@@ -19,15 +19,15 @@ MUSTANG v3.2.3 (MUltiple (protein) STructural AligNment alGorithm) [3] - http://
 
 AmberTools20 or later [4] - http://ambermd.org/AmberTools.php
 
-&dagger; If the user has a graphics processing unit (GPU), we recommend downloading the CUDA version of NAMD.
+The folder APPFEL/structures contains the initial structure of the complex, which will be the starting point of the calculations. The APPFEL/build\_files and APPFEL/namd\_files folders contain the CHARMM36 topology and parameters needed to build and simulate the systems. Additional force-field options, such as AMBER, will be added to APPFEL workflow in the near future. 
 
-The folder APPFEL/strucures contains the initial structure of the complex, which will be the starting point of the calculations. The APPFEL/build\_files and APPFEL/namd\_files folders contain the CHARMM36 topology and parameters needed to build and simulate the systems. Additional force-field options, such as AMBER, will be added to APPFEL workflow in the near future. 
-
-Even though Ambertools is not needed for parameter generation at the moment, the python3 version from AMBER's miniconda contains all the necessary modules to run APPFEL, such as *numpy* and *scipy*. So installing Ambertools might be simpler when compared to downloading, installing and adding each module to the python path. 
+Even though Ambertools is not needed for parameter generation at the moment, the python 3.8 version from AMBER's miniconda contains all the necessary modules to run APPFEL, such as *numpy* and *scipy*. Installing Ambertools might be simpler when compared to downloading, installing and adding each module to the python path. 
 
 # Running a sample calculation
 
 In this tutorial we will perform a sample calculation on a well-known protein-protein system (PDB code 1brs), which will be carried out inside the ./APPFEL/ folder from the APPFEL distribution. The whole procedure requires no manual steps and is divided in four stages: equilibration, steered molecular dynamics (SMD), running the free energy windows, and analyzing them to obtain the desired binding free energy.  
+
+The tutorial shown here is an example calculation that can be readily reproduced without any adjustments to the code or the input files. The theory and methods behind APPFEL, the meaning of each input parameter, and how to add new systems to the automated workflow, can be found in the software's User Guide, located inside the ./doc/ folder. 
 
 ## Equilibration
 
@@ -51,13 +51,35 @@ This command will create an ./smd/1brs/ folder, in which there is also an exampl
 
 ## Free energy windows 
 
-Once the SMD simulation is concluded, APPFEL has all the needed input files to create all the needed simulation windows for the binding free energy calculations. In order to create these windows, type inside the ./APPFEL folder:
+Once the SMD simulation is concluded, APPFEL has the needed input files to create all the simulation windows for the binding free energy calculations. In order to create these windows, type inside the ./APPFEL folder:
 
 python APPFEL.py -i input.in -s fe
 
-This command will create an ./fe/1brs/ folder, in which all of the free energy windows will be placed, in folders identified by the free energy component letter followed by a number. In the present example we will use all of the components, both for the application and removal of restraints, as well as the umbrella sampling procedure. Other options are available, such as allowing the application of multiple restraints using a single set of windows. More details on the free energy components can be found in the APPFEL User Guide.
+This command will create an ./fe/1brs/ folder, in which the free energy windows will be placed. The window folders are identified by the free energy component letter followed by a number. In the present example we will use all of the components, both for the application and removal of restraints, as well as the umbrella sampling procedure. 
 
-Once the windows are created, it is time to perform the needed simulations. The ./APPFEL/namd_files folder provides a bash script to run the simulations for all windows starting from the ./fe/1brs/ folder, called *run-fe.bash*. This script might have to be changed or replaced, depending on the user's setup to run the simulations, which is a simple procedure that only has to be done once. 
+Once the windows are created, it is time to perform the simulations for each. The ./APPFEL/namd_files folder provides a bash script to run the simulations for all windows starting from the ./fe/1brs/ folder, called *run-fe.bash*. This script might have to be changed or replaced, depending on the user's setup to run the simulations, which is a simple procedure that only has to be done once. 
+
+### Analysis
+
+Once all of the free energy simulations are concluded, it is time to process the output files and obtain the binding free energy. Again, inside the ./APPFEL/ folder type:
+
+python APPFEL.py -i input.in -s analysis
+
+You should see a ./Results directory inside the ./fe/1brs/ folder, with all of the components and the final calculated binding free energy located in the Results.dat file. This folder also contains the results for each of the chosen data blocks, which is useful to check for convergence and fluctuations, and is also used to calculate the uncertainties.
+
+## Additional systems
+
+To include a new protein protein complex, some additional input data is needed, such as a reference structure for alignment of the receptor, and the chain identifiers for each molecule. The APPFEL User Guide provides detailed guidelines on how to add a new system to the APPFEL workflow. 
+
+# More information
+
+For more information or enquiries you can contact the author directly:
+
+Germano Heinzelmann <br/>
+Departamento de Física, Universidade Federal de Santa Catarina <br/>
+Florianópolis - SC  88040-970 Brasil <br/>
+email: germanohei@gmail.com <br/>
+
 
 # Acknowledgments
 

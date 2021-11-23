@@ -6,17 +6,17 @@
 
 # Structure information
 
-system = 1bbz
+system = 1brs
 
-rec_chain     =  A   # Chain identified as receptor in the original complex file (kept fixed)
+rec_chain     =  C   # Chain identified as receptor in the original complex file (kept fixed)
 
-lig_chain     =  B   # Chain identified as ligand in the original complex file (pulled from receptor)
+lig_chain     =  F   # Chain identified as ligand in the original complex file (pulled from receptor)
 
 # Variables for setting free energy calculations, also used on analysis       
 
-fe_type = express        # Type of free energy calculations (rest, pmf, all, merged, express, custom)
+fe_type = custom        # Type of free energy calculations (rest, pmf, all, merged, express, custom)
 
-components = [  u  ] # Used with custom option for fe_type
+components = [ u ] # Used with custom option for fe_type
 
 rest_wgt = [ 0.00 0.20 0.40 0.80 1.60 2.40 4.00 5.50 8.65 11.80 18.10 24.40 37.00 49.60 74.80 100.00 ]   # Restraints attach/release weights
 
@@ -28,19 +28,19 @@ num_sim = 10   # Number of production simulations - work in progress
 
 # Force constants
 
-rec_trans_force      =  1000.0   # Receptor center of mass distance spring constant - kcal/mol/Angstrom**2
-rec_orient_force     = 10000.0   # Receptor orientation spring constant - kcal/mol/rad**2
-rec_rmsd_force       =    50.0   # Protein conformational RMSD spring constant - kcal/mol/Angstrom**2
-lig_trans_force      =    10.0   # Ligand center of mass distance spring constant - kcal/mol/Angstrom**2
-lig_orient_force     =  1500.0   # Ligand orientation spring constant - kcal/mol/rad**2
-lig_rmsd_force       =    50.0   # Ligand conformational RMSD spring constant - kcal/mol/Angstrom**2
+rec_trans_force      =    100.0   # Receptor center of mass distance spring constant - kcal/mol/Angstrom**2
+rec_orient_force     =  15000.0   # Receptor orientation spring constant - kcal/mol/quat**2
+rec_rmsd_force       =     10.0   # Protein conformational RMSD spring constant - kcal/mol/Angstrom**2
+lig_trans_force      =     10.0   # Ligand center of mass distance spring constant - kcal/mol/Angstrom**2
+lig_orient_force     =   1500.0   # Ligand orientation spring constant - kcal/mol/quat**2
+lig_rmsd_force       =     20.0   # Ligand conformational RMSD spring constant - kcal/mol/Angstrom**2
 
 # Water model, number and box size in the x and y direction
 
 water_model      = TIP3P  # Water model (SPCE, TIP4PEW or TIP3P) -  still need to implement other models
 boxsize_x        = 60     # Simulation box size in the x direction
 boxsize_y        = 60     # Simulation box size in the y direction
-boxsize_z        = 90     # Simulation box size in the z direction (pulling direction)
+boxsize_z        = 110     # Simulation box size in the z direction (pulling direction)
 box_z_center     = 15     # Center of the box on the z direction. 
 boxsize_ligand   = 60     # Simulation x, y and z box size for ligand only
 
@@ -85,7 +85,7 @@ r_steps2	= 2000000   # Number of steps for window component r (production)
 # Conformational restraints on the protein and ligand (Use VMD syntax) - **receptor is always segname A and ligand always segname B**
 
 rec_restr		= "(segname A) and (same residue as within 4 of segname B) and (noh)"     # VMD expression for protein conformational RMSD restraints
-lig_restr		= "(segname B) and (same residue as within 4 of segname A) and (noh)"     # VMD expression for ligand conformational RMSD restraints
+lig_restr		= "(segname B) and (backbone or ((same residue as within 4 of segname A) and (noh)))"     # VMD expression for ligand conformational RMSD restraints
 
 # NAMD options for production simulations
 
