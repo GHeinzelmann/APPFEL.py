@@ -59,7 +59,7 @@ This command will create an ./fe/1brs/ folder, in which the free energy windows 
 
 Once the windows are created, it is time to perform the simulations for each. The ./APPFEL/namd_files folder provides a bash script to run the simulations for all windows starting from the ./fe/1brs/ folder, called *run-fe.bash*. This script might have to be changed or replaced, depending on the user's setup to run the simulations, which is a simple procedure that only has to be done once. 
 
-### Analysis
+## Analysis
 
 Once all of the free energy simulations are concluded, it is time to process the output files and obtain the binding free energy. Again, inside the ./APPFEL/ folder type:
 
