@@ -11,7 +11,7 @@ import numpy as np
 from lib.pymbar import MBAR # multistate Bennett acceptance ratio
 from lib.pymbar import timeseries # timeseries analysis
 
-def fe_values(blocks, components, temperature, system, rest_wgt, rest, pmf_dist):
+def fe_values(blocks, components, temperature, system, rest_wgt, rest, pmf_dist, num_sim):
 
 
     # Set initial values to zero
@@ -34,11 +34,17 @@ def fe_values(blocks, components, temperature, system, rest_wgt, rest, pmf_dist)
             k_tr = rest[3]
             k_qu = rest[4]
             fe_b = fe_int(k_tr, k_qu, temperature)
+          # Combine all production simulations
+          fout = open('restraints.dat', "w")
+          for k in range(1, num_sim):
+            if os.path.exists("out_rest-%02d.colvars.traj" %k):
+              with open("out_rest-%02d.colvars.traj" %k, "r") as fin:
+                for line in fin:
+                  if not '#' in line:
+                    data.append(line)
+                    fout.write(line)
+          fout.close()
           # Separate in blocks
-          with open("out_rest-01.colvars.traj", "r") as fin:
-            for line in fin:
-              if not '#' in line:
-                data.append(line)
           for k in range(0, blocks):
             fout = open('block%02d.dat' % (k+1), "w")
             for t in range(k*int(round(len(data)//blocks)), (k+1)*int(round(len(data)//blocks))):
@@ -50,11 +56,17 @@ def fe_values(blocks, components, temperature, system, rest_wgt, rest, pmf_dist)
           data = []
           win = j
           os.chdir('%s%02d' %(comp, int(win)))
+          # Combine all production simulations
+          fout = open('restraints.dat', "w")
+          for k in range(1, num_sim):
+            if os.path.exists("out_run-%02d.colvars.traj" %k):
+              with open("out_run-%02d.colvars.traj" %k, "r") as fin:
+                for line in fin:
+                  if not '#' in line:
+                    data.append(line)
+                    fout.write(line)
+          fout.close()
           # Separate in blocks
-          with open("out_run-01.colvars.traj", "r") as fin:
-            for line in fin:
-              if not '#' in line:
-                data.append(line)
           for k in range(0, blocks):
             fout = open('block%02d.dat' % (k+1), "w")
             for t in range(k*int(round(len(data)//blocks)), (k+1)*int(round(len(data)//blocks))):
@@ -67,11 +79,11 @@ def fe_values(blocks, components, temperature, system, rest_wgt, rest, pmf_dist)
     for i in range(0, len(components)):
       comp = components[i]
       if comp != 'u':
-        rest_file = 'out_rest-01.colvars.traj'
+        rest_file = 'restraints.dat'
         mode = 'all'
         fe_mbar(mode, comp, system, rest_file, temperature)
       else:
-        rest_file = 'out_run-01.colvars.traj'
+        rest_file = 'restraints.dat'
         mode = 'all'
         fe_mbar(mode, comp, system, rest_file, temperature)
 

@@ -18,21 +18,21 @@ fe_type = all        # Type of free energy calculations (rest, pmf, all, merged,
 
 components = [ u ] # Used with custom option for fe_type
 
-rest_wgt = [ 0.00 0.20 0.40 0.80 1.60 2.40 4.00 5.50 8.65 11.80 18.10 24.40 37.00 49.60 74.80 100.00 ]   # Restraints attach/release weights
+rest_wgt = [ 0.00 1.00 1.80 3.20 5.60 10.00 17.80 31.60 56.20 100.0 ]   # Restraints attach/release weights
 
 pmf_dist  = [ 0.00 0.25 0.50 0.75 1.00 1.25 1.50 1.75 2.00 2.25 2.50 2.75 3.00 3.25 3.50 3.75 4.00 4.25 4.50 4.75 5.00 5.40 5.80 6.20 6.60 7.00 7.40 7.80 8.20 8.60 9.00 9.50 10.00 10.50 11.00 ]   # Umbrella windows
 
 blocks = 5     # Number of blocks for block data analysis
 
-num_sim = 10   # Number of production simulations - work in progress
+num_sim = 10   # Number of production simulations 
 
 # Force constants
 
 rec_trans_force      =    100.0   # Receptor center of mass distance spring constant - kcal/mol/Angstrom**2
-rec_orient_force     =  15000.0   # Receptor orientation spring constant - kcal/mol/quat**2
+rec_orient_force     =  10000.0   # Receptor orientation spring constant - kcal/mol/quat**2
 rec_rmsd_force       =     10.0   # Protein conformational RMSD spring constant - kcal/mol/Angstrom**2
 lig_trans_force      =     10.0   # Ligand center of mass distance spring constant - kcal/mol/Angstrom**2
-lig_orient_force     =   1500.0   # Ligand orientation spring constant - kcal/mol/quat**2
+lig_orient_force     =   1000.0   # Ligand orientation spring constant - kcal/mol/quat**2
 lig_rmsd_force       =     20.0   # Ligand conformational RMSD spring constant - kcal/mol/Angstrom**2
 
 # Water model, number and box size in the x and y direction
@@ -46,8 +46,8 @@ boxsize_ligand   = 60     # Simulation x, y and z box size for ligand only
 
 # Counterions 
 
-cation          = SOD      # cation for neutralization/ionization - need to implement other ion options               
-anion           = CLA      # anion  for neutralization/ionization - need to implement other ion options  
+cation          = SOD      # cation for neutralization/ionization                
+anion           = CLA      # anion  for neutralization/ionization   
 ion_conc        = 0.15     # desired ion concentration in mol/L - choose 0.0 for neutralization only
 
 # Simulation parameters
@@ -58,22 +58,22 @@ eq_steps	= 2500000   # Number of steps for equilibration after heating
 
 smd_steps 	= 8000000   # Number of steps for pulling SMD
 
-a_steps1	= 1000000   # Number of steps per window for component a (equilibrium)
+a_steps1	= 2000000   # Number of steps per window for component a (equilibrium)
 a_steps2	= 2000000   # Number of steps for window component a (production) 
  
-l_steps1	= 1000000   # Number of steps per window for component l (equilibrium)  
+l_steps1	= 2000000   # Number of steps per window for component l (equilibrium)  
 l_steps2	= 2000000   # Number of steps for window component l (production)             
 
-t_steps1	=  500000   # Number of steps per window for component t (equilibrium)
+t_steps1	= 1000000   # Number of steps per window for component t (equilibrium)
 t_steps2	= 1000000   # Number of steps for window component t (production)     
 
-u_steps1	= 1000000   # Number of steps per window for component u (equilibrium)
-u_steps2	= 2000000   # Number of steps for window component u (production)     
+u_steps1	= 2000000   # Number of steps per window for component u (equilibrium)
+u_steps2	= 3000000   # Number of steps for window component u (production)     
 
-c_steps1	= 1000000   # Number of steps per window for component c (equilibrium)
+c_steps1	= 2000000   # Number of steps per window for component c (equilibrium)
 c_steps2	= 2000000   # Number of steps for window component c (production)     
 
-r_steps1	= 1000000   # Number of steps per window for component r (equilibrium) 
+r_steps1	= 2000000   # Number of steps per window for component r (equilibrium) 
 r_steps2	= 2000000   # Number of steps for window component r (production)     
 
 #m_steps1	= 1000000   # Number of steps per window for component m (equilibrium) 
@@ -94,7 +94,7 @@ dcdfreq = 20000                 # write coordinates to trajectory file every dcd
 xstfreq = 1000                 # write box size to xst file every xstfreq steps
 outputPressure = 5000           # write pressure to output file every outputPressure steps 
 outputEnergies = 5000           # write energies to output file every outputEnergies steps 
-colvarsTrajFrequency = 1000      # write colvars trajectories every colvarsTrajFrequency steps 
+colvarsTrajFrequency = 500      # write colvars trajectories every colvarsTrajFrequency steps 
 cutoff = 12.0                   # cutoff for nonbonded interactions 
 langevinDamping = 5.0           # collision frequency in ps^-1 for Langevin Dynamics (temperature control)
 timestep = 2                    # simulation ime step in fs

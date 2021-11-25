@@ -191,6 +191,20 @@ def sim_fe(comp, system, rest, water_model, boxsize, ion_def, rec_chain, lig_cha
     if not os.path.exists(system):
       os.makedirs(system)
     os.chdir(system)
+    runrng = len(rest_wgt) - 1    
+    runumb = len(pmf_dist) - 1    
+    shutil.copy('../namd_files/run-all.bash', './')
+    with open('run-all.bash') as f:
+      s = f.read()
+      s = s.replace('RANGE', '%2.0f' %runrng).replace('RUMB', '%2.0f' %runumb)
+    with open('run-all.bash', "w") as f:
+      f.write(s)
+    shutil.copy('../namd_files/run-express.bash', './')
+    with open('run-express.bash') as f:
+      s = f.read()
+      s = s.replace('RANGE', '%2.0f' %runrng).replace('RUMB', '%2.0f' %runumb)
+    with open('run-express.bash', "w") as f:
+      f.write(s)
     if not os.path.exists("input_files"):
       os.makedirs("input_files")
     os.chdir("input_files")
@@ -212,9 +226,6 @@ def sim_fe(comp, system, rest, water_model, boxsize, ion_def, rec_chain, lig_cha
     shutil.copy('../../namd_files/par_all36_lipid.prm', './')
     shutil.copy('../../namd_files/par_all36_prot.prm', './')
     shutil.copy('../../namd_files/toppar_water_ions.str', './')
-    shutil.copy('../../namd_files/run-rest1.bash', './')
-    shutil.copy('../../namd_files/run-rest2.bash', './')
-    shutil.copy('../../namd_files/run-sep.bash', './')
     shutil.copy("../../build_files/get-frames-ini.tcl", './')
     # Read definitions and change protein/ligand and change colvar file
     cmass_file = 'cmass.txt'
@@ -328,8 +339,6 @@ def sim_fe(comp, system, rest, water_model, boxsize, ion_def, rec_chain, lig_cha
         shutil.copy("../input_files/ionized.psf", './')
         shutil.copy('../input_files/par_all36_lipid.prm', './')
         shutil.copy('../input_files/par_all36_prot.prm', './')
-        shutil.copy("../input_files/run-rest1.bash", './')
-        shutil.copy("../input_files/run-rest2.bash", './')
         shutil.copy('../input_files/toppar_water_ions.str', './')
         conf_min = open('./conf_rest-00', 'wt')
         conf_min.write('######################################################\n')
@@ -387,8 +396,6 @@ def sim_fe(comp, system, rest, water_model, boxsize, ion_def, rec_chain, lig_cha
         shutil.copy("../input_files/ionized.psf", './')
         shutil.copy('../input_files/par_all36_lipid.prm', './')
         shutil.copy('../input_files/par_all36_prot.prm', './')
-        shutil.copy("../input_files/run-rest1.bash", './')
-        shutil.copy("../input_files/run-rest2.bash", './')
         shutil.copy('../input_files/toppar_water_ions.str', './')
         conf_min = open('./conf_rest-00', 'wt')
         conf_min.write('######################################################\n')
@@ -496,7 +503,6 @@ def sim_rec(comp, system, rest, water_model, boxsize, ion_def, rec_chain, rec_re
     shutil.copy('../../namd_files/par_all36_lipid.prm', './')
     shutil.copy('../../namd_files/par_all36_prot.prm', './')
     shutil.copy('../../namd_files/toppar_water_ions.str', './')
-    shutil.copy('../../namd_files/run-sep.bash', './')
     os.chdir('../')
     
     for k in range(0, len(rest_wgt)):
@@ -510,7 +516,6 @@ def sim_rec(comp, system, rest, water_model, boxsize, ion_def, rec_chain, rec_re
         shutil.copy("../input_files/conf_heat", './')
         shutil.copy("../input_files/colv-%s.inp" %comp, './')
         shutil.copy("../input_files/atoms.pdb", './atoms-eq2.pdb')
-        shutil.copy('../input_files/run-sep.bash', './')
         shutil.copy('../input_files/par_all36_lipid.prm', './')
         shutil.copy('../input_files/par_all36_prot.prm', './')
         shutil.copy('../input_files/toppar_water_ions.str', './')
@@ -569,7 +574,6 @@ def sim_rec(comp, system, rest, water_model, boxsize, ion_def, rec_chain, rec_re
         for filename in glob.glob(os.path.join('../r00/', '*.pdb')):
           shutil.copy(filename, './')
         shutil.copy('../r00/ionized.psf', './')
-        shutil.copy('../r00/run-sep.bash', './')
         shutil.copy('../r00/colv-r.inp', './')
         conf_min = open('./conf_rest-00', 'wt')
         conf_min.write('######################################################\n')
@@ -659,7 +663,6 @@ def sim_lig(comp, system, rest, water_model, boxsize_ligand, ion_def, lig_chain,
     shutil.copy('../../namd_files/par_all36_lipid.prm', './')
     shutil.copy('../../namd_files/par_all36_prot.prm', './')
     shutil.copy('../../namd_files/toppar_water_ions.str', './')
-    shutil.copy('../../namd_files/run-sep.bash', './')
     os.chdir('../')
     
     for k in range(0, len(rest_wgt)):
@@ -673,7 +676,6 @@ def sim_lig(comp, system, rest, water_model, boxsize_ligand, ion_def, lig_chain,
         shutil.copy("../input_files/conf_heat", './')
         shutil.copy("../input_files/colv-%s.inp" %comp, './')
         shutil.copy("../input_files/atoms.pdb", './atoms-eq2.pdb')
-        shutil.copy('../input_files/run-sep.bash', './')
         shutil.copy('../input_files/par_all36_lipid.prm', './')
         shutil.copy('../input_files/par_all36_prot.prm', './')
         shutil.copy('../input_files/toppar_water_ions.str', './')
@@ -732,7 +734,6 @@ def sim_lig(comp, system, rest, water_model, boxsize_ligand, ion_def, lig_chain,
         for filename in glob.glob(os.path.join('../c00/', '*.pdb')):
           shutil.copy(filename, './')
         shutil.copy('../c00/ionized.psf', './')
-        shutil.copy('../c00/run-sep.bash', './')
         shutil.copy('../c00/colv-c.inp', './')
         conf_min = open('./conf_rest-00', 'wt')
         conf_min.write('######################################################\n')

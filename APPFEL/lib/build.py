@@ -55,7 +55,7 @@ def build_equil(system, rec_chain, lig_chain, water_model, boxsize, ion_def):
     with open("ionize-ini.tcl", "rt") as fin:
       with open("ionize.tcl", "wt") as fout:
         for line in fin:
-          fout.write(line.replace('ION_CONC','%3.2f' %ion_conc))
+          fout.write(line.replace('ION_CONC','%3.2f' %ion_conc).replace('CATION','%s' %ion_def[0]).replace('ANION','%s' %ion_def[1]))
     sp.call('vmd -dispdev text -e split.tcl', shell=True)
     sp.call('mustang-3.2.3 -p ./ -i reference.pdb prot-ini.pdb -o prot-aligned -r ON', shell=True)
     with open('prot-aligned.pdb', 'r') as oldfile, open('prot-aligned-clean.pdb', 'w') as newfile:
@@ -96,7 +96,7 @@ def build_receptor(system, rec_chain, rec_restr, water_model, boxsize, ion_def):
     with open("ionize-ini.tcl", "rt") as fin:
       with open("ionize.tcl", "wt") as fout:
         for line in fin:
-          fout.write(line.replace('ION_CONC','%3.2f' %ion_conc))
+          fout.write(line.replace('ION_CONC','%3.2f' %ion_conc).replace('CATION','%s' %ion_def[0]).replace('ANION','%s' %ion_def[1]))
     sp.call('vmd -dispdev text -e split.tcl', shell=True)
     sp.call('vmd -dispdev text -e psf-rec.tcl', shell=True)
     sp.call('vmd -dispdev text -e solvate.tcl', shell=True)
@@ -127,7 +127,7 @@ def build_ligand(system, lig_chain, lig_restr, water_model, boxsize_ligand, ion_
     with open("ionize-ini.tcl", "rt") as fin:
       with open("ionize.tcl", "wt") as fout:
         for line in fin:
-          fout.write(line.replace('ION_CONC','%3.2f' %ion_conc))
+          fout.write(line.replace('ION_CONC','%3.2f' %ion_conc).replace('CATION','%s' %ion_def[0]).replace('ANION','%s' %ion_def[1]))
     sp.call('vmd -dispdev text -e split.tcl', shell=True)
     sp.call('vmd -dispdev text -e psf-lig.tcl', shell=True)
     sp.call('vmd -dispdev text -e solvate.tcl', shell=True)

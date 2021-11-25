@@ -134,6 +134,6 @@ minimize 1000
 
 for {set i 0} {$i <= $temperature} {incr i 1} { 
 langevinTemp $i 
-run 200 
+run 1000 
 }
  

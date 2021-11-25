@@ -272,6 +272,6 @@ elif stage == 'fe':
         setup.sim_lig(comp, system, rest, water_model, boxsize_ligand, ion_def, lig_chain, lig_restr, temperature, steps1, steps2, rest_wgt, num_sim, rstfreq, dcdfreq, xstfreq, outpr, outen, clvfr, cutoff, gamma, tstep, ffield)
 elif stage == 'analysis':
   # Free energies MBAR and analytical calculations
-  analysis.fe_values(blocks, components, temperature, system, rest_wgt, rest, pmf_dist)
+  analysis.fe_values(blocks, components, temperature, system, rest_wgt, rest, pmf_dist, num_sim)
   os.chdir('../../')
 
