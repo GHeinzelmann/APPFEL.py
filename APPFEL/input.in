@@ -37,10 +37,10 @@ lig_rmsd_force       =     20.0   # Ligand conformational RMSD spring constant -
 
 # Water model, number and box size in the x and y direction
 
-water_model      = TIP3P  # Water model (SPCE, TIP4PEW or TIP3P) -  still need to implement other models
+water_model      = TIP3P  # Water model (TIP3P only, still need to implement other models)
 boxsize_x        = 60     # Simulation box size in the x direction
 boxsize_y        = 60     # Simulation box size in the y direction
-boxsize_z        = 110     # Simulation box size in the z direction (pulling direction)
+boxsize_z        = 110    # Simulation box size in the z direction (pulling direction)
 box_z_center     = 15     # Center of the box on the z direction. 
 boxsize_ligand   = 60     # Simulation x, y and z box size for ligand only
 
@@ -82,16 +82,16 @@ r_steps2	= 2000000   # Number of steps for window component r (production)
 #n_steps1	= 1000000   # Number of steps per window for component n (equilibrium) 
 #n_steps2	= 2000000   # Number of steps for window component n (production)     
 
-# Conformational restraints on the protein and ligand (Use VMD syntax) - **receptor is always segname A and ligand always segname B**
+# Conformational restraints on the receptor and ligand (Use VMD syntax) - **receptor is always segname A and ligand always segname B**
 
-rec_restr		= "(segname A) and (same residue as within 4 of segname B) and (noh)"     # VMD expression for protein conformational RMSD restraints
+rec_restr		= "(segname A) and (same residue as within 4 of segname B) and (noh)"                     # VMD expression for receptor conformational RMSD restraints
 lig_restr		= "(segname B) and (backbone or ((same residue as within 4 of segname A) and (noh)))"     # VMD expression for ligand conformational RMSD restraints
 
 # NAMD options for production simulations
 
 restartfreq = 1000              # write coordinate/velocity restart files every restartfreq steps
 dcdfreq = 20000                 # write coordinates to trajectory file every dcdfreq steps (controls PMF and restraints output)
-xstfreq = 1000                 # write box size to xst file every xstfreq steps
+xstfreq = 1000                  # write box size to xst file every xstfreq steps
 outputPressure = 5000           # write pressure to output file every outputPressure steps 
 outputEnergies = 5000           # write energies to output file every outputEnergies steps 
 colvarsTrajFrequency = 500      # write colvars trajectories every colvarsTrajFrequency steps 
