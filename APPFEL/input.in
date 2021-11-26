@@ -30,7 +30,7 @@ num_sim = 10   # Number of production simulations
 
 rec_trans_force      =    100.0   # Receptor center of mass distance spring constant - kcal/mol/Angstrom**2
 rec_orient_force     =  10000.0   # Receptor orientation spring constant - kcal/mol/quat**2
-rec_rmsd_force       =     10.0   # Protein conformational RMSD spring constant - kcal/mol/Angstrom**2
+rec_rmsd_force       =     10.0   # Receptor conformational RMSD spring constant - kcal/mol/Angstrom**2
 lig_trans_force      =     10.0   # Ligand center of mass distance spring constant - kcal/mol/Angstrom**2
 lig_orient_force     =   1000.0   # Ligand orientation spring constant - kcal/mol/quat**2
 lig_rmsd_force       =     20.0   # Ligand conformational RMSD spring constant - kcal/mol/Angstrom**2
