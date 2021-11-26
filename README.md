@@ -57,7 +57,7 @@ python APPFEL.py -i input.in -s fe
 
 This command will create an ./fe/1brs/ folder, in which the free energy windows will be placed. The window folders are identified by the free energy component letter followed by a number. In the present example we will use all of the components, both for the application and removal of restraints, as well as the umbrella sampling procedure. 
 
-Once the windows are created, it is time to perform the simulations for each. The ./APPFEL/namd_files folder provides a bash script to run the simulations for all windows starting from the ./fe/1brs/ folder, called *run-all.bash*. This script might have to be changed or replaced, depending on the user's setup to run the simulations, which is a simple procedure that only has to be done once. 
+Once the windows are created, it is time to perform the simulations for each. APPFEL provides a bash script to run the simulations for all windows starting from the ./fe/1brs/ folder, called *run-all.bash*. This script might have to be changed or replaced, depending on the user's setup to run the simulations, which is a simple procedure that only has to be done once. 
 
 ## Analysis
 
